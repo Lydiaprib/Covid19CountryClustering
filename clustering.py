@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from mpl_toolkits.mplot3d import Axes3D
 
-
+# Permite que se imprima el dataframe por completo
 pd.set_option("display.max_rows", None)
 
 # Se carga el conjunto de datos que se van a usar para hacer clustering
@@ -18,12 +18,14 @@ X = df_original.iloc[:, [5, 8, 9]].values
 for i in range(len(X)):
     population = [None] * len(X)
     for j in range(len(X[i])):
-        X[i][j] = str(X[i][j]).replace(",", "")
-        valor = df_original.iloc[i, [12]].values
-        print(valor[0])
-        population[i] = int(str(valor).replace(",", ""))
-        if i == 0 and X[i][j] != -1:
-            X[i][j] = X[i][j] / population[i] * 1000
+        if X[i][j] != -1:
+            if ',' in X[i][j]:
+                X[i][j] = int(X[i][j].replace(",", ""))
+        numeroHabitantes = df_original.iloc[i, [12]].values
+        population[i] = numeroHabitantes[0].replace(",", "")      
+        # Cálculo del número total de recuperados por cada millón de habitantes
+        if int(population[i]) != 0 and j == 0 and X[i][j] != -1:
+            X[i][j] = int(X[i][j]) / int(population[i]) * 1000000
     X[i] = list(map(float, X[i]))
 
 # Para encontrar el número óptimo de clusters, se usa el metodo del codo
