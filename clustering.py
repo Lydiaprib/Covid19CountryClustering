@@ -15,7 +15,7 @@ def traza(x, y, z, c, label, s=2):
     marker=dict(size=s, line=dict(color='rgb(0, 0, 0)', width=0.5), color=c, opacity=1),
     name=label
     )
-    return puntosTraza;
+    return puntosTraza
 
 def mostrarGrafica(title, x_colname, x_range, y_colname, y_range, z_colname, z_range, trazas):
     layout = go.Layout(
@@ -57,46 +57,56 @@ for i in range(len(X)):
     X[i] = list(map(float, X[i]))
 #print(X)
 
+def num_optimo_clusters():
+    wcss = []
+    for i in range(1, 11):
+        kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 50)
+        kmeans.fit(X)
+        wcss.append(kmeans.inertia_)
 
-wcss = []
-for i in range(1, 11):
-    kmeans = KMeans(n_clusters = i, init = 'k-means++', random_state = 50)
+    # Grafica de la suma de las distancias
+    # Para encontrar el número óptimo de clusters, se usa el metodo del codo
+    plt.plot(range(1, 11), wcss)
+    plt.title('Método codo')
+    plt.xlabel('Número de clusters')
+    plt.ylabel('WCSS')
+    plt.show()
+
+# Seleccion de numero optimo de clusters para el primer análisis, 3 en este caso
+num_optimo_clusters()
+
+def K_medias(clusters):
+    kmeans = KMeans(n_clusters = clusters, init = 'k-means++', random_state = 100)
     kmeans.fit(X)
-    wcss.append(kmeans.inertia_)
+    centroides = kmeans.cluster_centers_
+    y_kmeans = kmeans.fit_predict(X)
+    #print(y_kmeans)
+    
+    return kmeans, centroides, y_kmeans
 
-# Grafica de la suma de las distancias
-# Para encontrar el número óptimo de clusters, se usa el metodo del codo
-plt.plot(range(1, 11), wcss)
-plt.title('Método codo')
-plt.xlabel('Número de clusters')
-plt.ylabel('WCSS')
-plt.show() # En esta gráfica se muestra que el número óptimo de clusters es 3
+# Aplicacion del algoritmo k-medias para 3 clusters
+kmeans, centroides, y_kmeans = K_medias(3)
 
+def relacion_paises_cluster():
+    columnas = ["Paises", "Nº Cluster"]
+    datos = []
+    relacionPaisesCluster = pd.DataFrame(columns = columnas)
 
-kmeans = KMeans(n_clusters = 3, init = 'k-means++', random_state = 100)
-kmeans.fit(X)
-centroides = kmeans.cluster_centers_
-y_kmeans = kmeans.fit_predict(X)
-print(y_kmeans)
+    for i in range(len(paises)):
+        valores = [paises[i].tolist(), y_kmeans[i]]
+        zipped = zip(columnas, valores)
+        diccionario = dict(zipped)
+        datos.append(diccionario)
 
-columnas = ["Paises", "Nº Cluster"]
-datos = []
-relacionPaisesCluster = pd.DataFrame(columns = columnas)
+    relacionPaisesCluster = relacionPaisesCluster.append(datos, True)
+    return relacionPaisesCluster
 
-for i in range(len(paises)):
-    valores = [paises[i].tolist(), y_kmeans[i]]
-    zipped = zip(columnas, valores)
-    diccionario = dict(zipped)
-    datos.append(diccionario)
-
-relacionPaisesCluster = relacionPaisesCluster.append(datos, True)
+# Se crea un dataframe que relaciona los paises con el cluster al que pertenecen
+relacionPaisesCluster = relacion_paises_cluster()
 print(relacionPaisesCluster)
 
 # Se pinta cada uno de los clusters obtenidos en una gráfica 3D junto con sus centroides
 centroids = traza(centroides[:, 0], centroides[:, 1], centroides[:, 2], s= 8, c = "silver", label = "Centroides")
-'''centroide1 = traza(centroides[0, 0], centroides[0, 1], centroides[0, 2], s= 8, c = "salmon", label = "Centroide1")
-centroide2 = traza(centroides[1, 0], centroides[1, 1], centroides[2, 2], s= 8, c = "pale green", label = "Centroide2")
-centroide3 = traza(centroides[2, 0], centroides[2, 1], centroides[2, 2], s= 8, c = "sky blue", label = "Centroide3")'''
 cluster1 = traza(X[y_kmeans == 0, 0], X[y_kmeans == 0, 1], X[y_kmeans == 0, 2], s= 4, c='red', label = 'Cluster 1') #match with red=1 initial class
 cluster2 = traza(X[y_kmeans == 1, 0], X[y_kmeans == 1, 1], X[y_kmeans == 1, 2], s= 4, c='green', label = 'Cluster 2') #match with black=3 initial class
 cluster3 = traza(X[y_kmeans == 2, 0], X[y_kmeans == 2, 1], X[y_kmeans == 2, 2], s= 4, c='blue', label = 'Cluster 3') #match with blue=2 initial class
@@ -118,3 +128,7 @@ plt.xlabel('Recuperados')
 plt.ylabel('Casos')
 plt.legend()
 plt.show()
+
+# Extraccion de los outliers detectados, todos agrupados en el cluster 3
+elementosCluster = relacionPaisesCluster["Nº Cluster"].value_counts()
+print(elementosCluster) # Así se ve mas facilmente que el cluster 2 esta formado por 4 outliers que hay que eleminar
