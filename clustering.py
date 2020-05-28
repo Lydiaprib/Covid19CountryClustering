@@ -39,6 +39,9 @@ df_original = pd.read_csv("datos/Datos_Covid19_paises.csv", sep = ";", encoding=
 df_original = df_original.replace(np.nan, 0)
 # Se genera la matriz de las variables que interesan para el estudio
 X = df_original.iloc[:, [5, 8, 9]].values
+# Se genera la matriz con únicamente los nombres de los paises
+paises = df_original.iloc[:, [0]].values
+
 # Se tratan los datos de la matriz para que estén en forma de integer
 for i in range(len(X)):
     population = [None] * len(X)
@@ -52,7 +55,7 @@ for i in range(len(X)):
             X[i][j] = int(X[i][j]) / int(population[i]) * 1000000
         X[i][j] = round(X[i][j] + 0.5)
     X[i] = list(map(float, X[i]))
-print(X)
+#print(X)
 
 
 wcss = []
@@ -75,6 +78,20 @@ kmeans.fit(X)
 centroides = kmeans.cluster_centers_
 y_kmeans = kmeans.fit_predict(X)
 print(y_kmeans)
+
+columnas = ["Paises", "Nº Cluster"]
+datos = []
+relacionPaisesCluster = pd.DataFrame(columns = columnas)
+
+for i in range(len(paises)):
+    valores = [paises[i].tolist(), y_kmeans[i]]
+    zipped = zip(columnas, valores)
+    diccionario = dict(zipped)
+    datos.append(diccionario)
+
+relacionPaisesCluster = relacionPaisesCluster.append(datos, True)
+print(relacionPaisesCluster)
+
 # Se pinta cada uno de los clusters obtenidos en una gráfica 3D junto con sus centroides
 centroids = traza(centroides[:, 0], centroides[:, 1], centroides[:, 2], s= 8, c = "silver", label = "Centroides")
 '''centroide1 = traza(centroides[0, 0], centroides[0, 1], centroides[0, 2], s= 8, c = "salmon", label = "Centroide1")
