@@ -137,11 +137,11 @@ plt.show()'''
 # Extraccion de los outliers detectados, todos agrupados en el cluster 3
 elementosCluster = relacionPaisesCluster["Nº Cluster"].value_counts()
 print(elementosCluster) # Así se ve mas facilmente que el cluster 2 esta formado por 4 outliers que hay que eleminar
-filasCluster = relacionPaisesCluster[relacionPaisesCluster["Nº Cluster"] == 2]
+filasCluster = relacionPaisesCluster[relacionPaisesCluster["Nº Cluster"] == 1]
 print(filasCluster) # Asi se detectan las filas en las que se encuentran los elementos del cluster 2
 
 # Se eliminan las filas de los outliers
-df_no_outliers = df_original.drop([18, 118, 126, 200])
+df_no_outliers = df_original.drop([18, 118, 125, 199])
 df_no_outliers.reset_index(drop=True, inplace=True) # Se regeneran los indices para mayor comodidad
 #print(df_no_outliers)
 # Se vuelve a generar la matriz de las variables que interesan para el estudio
@@ -162,7 +162,7 @@ print(relacionPaisesCluster)
 
 # Se pintan las gráficas de los nuevos clusters obtenidos
 # Se pinta cada uno de los clusters obtenidos en una gráfica 3D junto con sus centroides
-centroids = traza(centroides[:, 0], centroides[:, 1], centroides[:, 2], s= 8, c = "silver", label = "Centroides")
+'''centroids = traza(centroides[:, 0], centroides[:, 1], centroides[:, 2], s= 8, c = "silver", label = "Centroides")
 cluster1 = traza(X[y_kmeans == 0, 0], X[y_kmeans == 0, 1], X[y_kmeans == 0, 2], s= 4, c='red', label = 'Cluster 1')
 cluster2 = traza(X[y_kmeans == 1, 0], X[y_kmeans == 1, 1], X[y_kmeans == 1, 2], s= 4, c='green', label = 'Cluster 2')
 
@@ -182,4 +182,4 @@ plt.title('Clustering Recuperados vs. Casos')
 plt.xlabel('Recuperados')
 plt.ylabel('Casos')
 plt.legend()
-plt.show()
+plt.show()'''
