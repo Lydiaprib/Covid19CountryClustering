@@ -162,7 +162,7 @@ print(relacionPaisesCluster)
 
 # Se pintan las gráficas de los nuevos clusters obtenidos
 # Se pinta cada uno de los clusters obtenidos en una gráfica 3D junto con sus centroides
-'''centroids = traza(centroides[:, 0], centroides[:, 1], centroides[:, 2], s= 8, c = "silver", label = "Centroides")
+centroids = traza(centroides[:, 0], centroides[:, 1], centroides[:, 2], s= 8, c = "silver", label = "Centroides")
 cluster1 = traza(X[y_kmeans == 0, 0], X[y_kmeans == 0, 1], X[y_kmeans == 0, 2], s= 4, c='red', label = 'Cluster 1')
 cluster2 = traza(X[y_kmeans == 1, 0], X[y_kmeans == 1, 1], X[y_kmeans == 1, 2], s= 4, c='green', label = 'Cluster 2')
 
@@ -175,7 +175,7 @@ z=X[:,2] # Fallecimientos
 mostrarGrafica("K-Medias sin outliers", "Número Recuperados / M", [min(x),max(x)], "Casos totales / M", [min(y),max(y)], "Fallecimientos / M", [min(z)-1,max(z)], [cluster1, cluster2, centroids])
 
 # Visualizacion en 2 dimensiones de las variables Recuperados y Casos de los clusters
-plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, s=50, cmap='viridis')
+'''plt.scatter(X[:, 0], X[:, 1], c=y_kmeans, s=50, cmap='viridis')
 plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s = 300, c = 'pink', label = "Centroides")
 
 plt.title('Clustering Recuperados vs. Casos')
